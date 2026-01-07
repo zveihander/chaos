@@ -1,0 +1,21 @@
+name: mirror to git.evanalvarez.dev
+on: [push]
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 
+
+      - name: install ssh key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
+
+      - name: push to mirror
+        run: |
+          git push --mirror git@git.evanalvarez.dev:public/${{ github.event.repository.name }}.git
